@@ -1,0 +1,63 @@
+.ispy-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page {
+    width: 8.5in;
+    height: 11in;
+    box-sizing: border-box;
+
+    position: relative;
+    background: white;
+}
+
+@media screen {
+    .page {
+        border: 1px solid burlywood;
+    }
+}
+
+.print-button {
+    margin: 20px 0;
+
+    padding: 10px 20px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    background: #4a90e2;
+    color: white;
+
+    border: none;
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.print-button:hover {
+    background: #357abd;
+}
+
+@media print {
+    @page {
+        size: Letter;
+        margin: 0;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    .tabs,
+    .print-button {
+        display: none;
+    }
+
+    .page {
+        width: 8.5in;
+        height: 11in;
+        border: none;
+    }
+}
