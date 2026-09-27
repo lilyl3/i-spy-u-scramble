@@ -1,24 +1,45 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from pathlib import Path
-
-app = FastAPI()
 
 outline_dir = Path("../images/outlines")
 
 word_to_object = {
-    "God": "sun",
-    "good": "heart",
-    "me": "mirror",
-    "to": "gift_box",
-    "is": "sheep"
+"God": "sun",
+"good": "heart",
+"me": "mirror",
+"to": "gift_box",
+"is": "sheep",
 }
 
-@app.get("/api/ispy/{word}")
-def generate_ispy(word):
-    object_name = word_to_object[word]
-    image_path = outline_dir / f"{object_name}.png"
-    return {
-        "word": word,
-        "object": object_name,
-        "path": str(image_path)
-    }
+class ISpyRequest(BaseModel):
+    sentence: str
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.mount(
+    "/images",
+    StaticFiles(directory=outline_dir),
+    name="images",
+)
+
+@app.post("/api/ispy")
+def generate_ispy(request: ISpyRequest):
+    response = []
+
+    for word in request.sentence.split(" "):
+        response.append({
+            "word": word,
+            "imageURL": f"http://localhost:8000/images/{word_to_object[word]}.png",
+        })
+
+    return response
